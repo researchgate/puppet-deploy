@@ -170,7 +170,7 @@ define deploy::file (
         undef   => '/bin/tar',
         default => $command
     }
-    untar { "${deploy::tempdir}/${file}" :
+    deploy::untar { "${deploy::tempdir}/${file}" :
       target          => $target,
       command         => $_command,
       command_options => $command_options,
@@ -178,7 +178,7 @@ define deploy::file (
       strip_level     => $strip_level,
       owner           => $owner,
       group           => $group,
-      require         => Exec["download_${file}"],
+      require         => $require_dependency,
       notify          => Exec["cleanup_${file}"]
     }
   } elsif $file =~ /.zip$/ {
@@ -186,13 +186,13 @@ define deploy::file (
         undef   => '/usr/bin/unzip',
         default => $command
     }
-    unzip { "${deploy::tempdir}/${file}" :
+    deploy::unzip { "${deploy::tempdir}/${file}" :
       target          => $target,
       command         => $_command,
       command_options => $command_options,
       owner           => $owner,
       group           => $group,
-      require         => Exec["download_${file}"],
+      require         => $require_dependency,
       notify          => Exec["cleanup_${file}"]
     }
   } else {
